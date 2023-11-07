@@ -7,8 +7,7 @@ use burn::{
     tensor::{
         activation::{sigmoid, softmax},
         backend::Backend,
-        module::embedding,
-        Data, Distribution, Int, Tensor,
+        Data, Int, Tensor,
     },
 };
 
@@ -83,7 +82,7 @@ pub struct Llama<B: Backend> {
 
 impl<B: Backend> Llama<B> {
     pub fn forward(&self, x: Tensor<B, 2, Int>) -> Tensor<B, 3> {
-        let [n_batch, seq_len] = x.dims();
+        let [_n_batch, seq_len] = x.dims();
 
         assert!(
             seq_len <= self.n_ctx,
@@ -478,7 +477,7 @@ fn numpy_to_tensor<B: Backend, const D: usize>(
     numpy_data: NpyData<f32>,
     device: &B::Device,
 ) -> Tensor<B, D> {
-    let mut v = numpy_data.to_vec();
+    let v = numpy_data.to_vec();
 
     let shape: Vec<_> = v[0..D].into_iter().map(|&v| v as usize).collect();
     let data: Vec<B::FloatElem> = v[D..].into_iter().map(|e| e.elem()).collect();
